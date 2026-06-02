@@ -51,15 +51,32 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/shopping' }),
   cookie: { maxAge: 600000 }
-}))
+}));
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store');
   next();
 });
+
+// DB ready flag
+let dbReady = false;
+
 db.connect((err) => {
-  if (err) console.log('❌ Database Connection Error: ' + err);
-  else console.log('✅ Database Connected to port 27017');
+  if (err) {
+    console.log('❌ Database Connection Error: ' + err);
+  } else {
+    console.log('✅ Database Connected to port 27017');
+    dbReady = true;
+  }
 });
+
+// Block requests until DB is ready
+app.use((req, res, next) => {
+  if (!dbReady) {
+    return res.status(503).send('Server is starting, please refresh in a moment...');
+  }
+  next();
+});
+
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 
@@ -70,14 +87,10 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
-
 
 module.exports = app;
