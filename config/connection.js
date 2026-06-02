@@ -5,6 +5,10 @@ const State = {
 };
 
 module.exports.connect = function (done) {
+  if (State.db) {
+    console.log('✅ Using existing DB connection');
+    return done();
+  }
   const url = process.env.MONGODB_URI || 'mongodb://localhost:27017/shopping';
 
   MongoClient.connect(url)

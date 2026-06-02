@@ -57,25 +57,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// DB ready flag
-let dbReady = false;
 
 db.connect((err) => {
   if (err) {
     console.log('❌ Database Connection Error: ' + err);
   } else {
     console.log('✅ Database Connected to port 27017');
-    dbReady = true;
   }
 });
 
-// Block requests until DB is ready
-app.use((req, res, next) => {
-  if (!dbReady) {
-    return res.status(503).send('Server is starting, please refresh in a moment...');
-  }
-  next();
-});
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
