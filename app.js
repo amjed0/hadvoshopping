@@ -52,21 +52,43 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/shopping' }),
   cookie: { maxAge: 600000 }
 }));
+// app.use((req, res, next) => {
+//   res.set('Cache-Control', 'no-store');
+//   next();
+// });
+
+
+// db.connect((err) => {
+//   if (err) {
+//     console.log('❌ Database Connection Error: ' + err);
+//   } else {
+//     console.log('✅ Database Connected to port 27017');
+//   }
+// });
+
+
+// app.use('/', userRouter);
+// app.use('/admin', adminRouter);
 app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store');
-  next();
-});
-
-
-db.connect((err) => {
-  if (err) {
-    console.log('❌ Database Connection Error: ' + err);
-  } else {
-    console.log('✅ Database Connected to port 27017');
+  // If the database is already established, move along safely
+  if (db.get()) {
+    return next();
   }
+
+  console.log('⚠️ Database instance is null. Initializing connection...');
+  
+  // Connect dynamically on the current request lifecycle
+  db.connect((err) => {
+    if (err) {
+      console.error('❌ Database connection failed during request:', err);
+      return res.status(500).send('Internal Database Connection Error');
+    }
+    console.log('✅ Database connected successfully via request gate middleware');
+    next();
+  });
 });
 
-
+// 3. YOUR ROUTES NOW SIT SAFELY BEHIND THE GATE
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 
