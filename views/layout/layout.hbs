@@ -33,9 +33,9 @@
     {{/if}}
 
     {{{body}}}
-     
+
     {{#unless admin}}
-    {{#if (eq title"Home")}}
+    {{#if title}}
     {{> user-footer}}
     {{/if}}
     {{/unless}}
