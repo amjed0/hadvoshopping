@@ -4,13 +4,19 @@ const { ObjectId } = require('mongodb');
 
 module.exports = {
 
-  addProduct: (product, callback) => {
-    product.price = parseFloat(product.price)
+  // addProduct: (product, callback) => {
+  //   product.price = parseFloat(product.price)
 
-    await.get().collection('product').insertOne(product).then((data) => {
-      callback(data.insertedId)
-    })
-  },
+  //   db.get().collection('product').insertOne(product).then((data) => {
+  //     callback(data.insertedId)
+  //   })
+  // },
+  addProduct: async (product, callback) => {
+  product.price = parseFloat(product.price);
+  let data = await db.get().collection('product').insertOne(product);
+  callback(data.insertedId);
+},
+
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
       let products = await db.get().collection(collection.PRODUCT_COLLECTION).find().toArray()
