@@ -49,7 +49,7 @@ module.exports.connect = async function (done) {
     
     // 2. Automatically grab the database name from the URI string, 
     // or fallback to 'shopping' if it isn't specified in the URI
-    State.db = client.db(); 
+    State.db = client.db('shopping'); 
     
     console.log(`✅ MongoDB connected successfully`);
     if (typeof done === 'function') done();
