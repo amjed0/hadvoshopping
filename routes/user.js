@@ -19,7 +19,7 @@ router.get('/', async function (req, res, next) {
     cartCount = await userHelpers.getCartCount(req.session.user._id)
   }
   productHelpers.getAllProducts().then((products) => {
-    res.render('user/view-products', { products, user, cartCount })
+    res.render('user/view-products', { products, user, cartCount, title:'Home'})
   })
 });
 router.get('/login', (req, res) => {
