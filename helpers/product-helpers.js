@@ -7,7 +7,7 @@ module.exports = {
   addProduct: (product, callback) => {
     product.price = parseFloat(product.price)
 
-    db.get().collection('product').insertOne(product).then((data) => {
+    await.get().collection('product').insertOne(product).then((data) => {
       callback(data.insertedId)
     })
   },
